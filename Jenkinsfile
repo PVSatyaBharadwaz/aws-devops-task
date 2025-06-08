@@ -1,8 +1,7 @@
 
 pipeline {
     agent any
-
-    stages {
+      stages {
         stage('Checkout') {
             steps {
                 checkout scm
@@ -16,6 +15,13 @@ pipeline {
         stage('Build Application') {
             steps {
                 sh 'npm run build'
+            }
+        }
+        stage('Deploy to S3') {
+            steps {
+                withCredentials([aws(credentials: 'aws-credentials-s3')]) {
+                    sh "aws s3 sync dist/ s3://aws-devops-task-satyab --delete"
+                }
             }
         }
     }
