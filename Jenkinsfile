@@ -1,7 +1,7 @@
-
 pipeline {
     agent any
-      stages {
+
+    stages {
         stage('Checkout') {
             steps {
                 checkout scm
@@ -19,8 +19,10 @@ pipeline {
         }
         stage('Deploy to S3') {
             steps {
-                withCredentials([aws(credentials: 'aws-credentials-s3')]) {
-                    sh "aws s3 sync dist/ s3://aws-devops-task-satyab --delete"
+                script {
+                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY', credentialsId: 'aws-credentials-s3')]) {
+                        sh "aws s3 sync dist/ s3://aws-devops-task-satyab --delete"
+                    }
                 }
             }
         }
